@@ -2,14 +2,15 @@ This is a ros2 practice repository.
 
 References:
 https://blog.csdn.net/qq_27865227/article/details/125280073
-Rhttps://blog.csdn.net/mlf2051288062/article/details/131642929
+
+https://blog.csdn.net/mlf2051288062/article/details/131642929
 
 1. 创建工作空间
 mkdir -p chapt2_ws/src
 cd chapt2_ws/src
 
 2. 创建功能包
-ros2 pkg create ros2_study --build-type ament_cmake --dependencies rclcpp
+ros2 pkg create ros2_second --build-type ament_cmake --dependencies rclcpp
 
 解释：
 pkg create 是创建包的意思
