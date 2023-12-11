@@ -1,0 +1,3 @@
+/home/simon/d2lros2/chapt2/basic/CMakeFiles/first_node.dir
+/home/simon/d2lros2/chapt2/basic/CMakeFiles/edit_cache.dir
+/home/simon/d2lros2/chapt2/basic/CMakeFiles/rebuild_cache.dir
