@@ -1,0 +1,45 @@
+Reference: https://blog.csdn.net/mlf2051288062/article/details/131642929
+1. 创建工作空间
+cd d2lros2/chapt2/
+mkdir -p chapt2_ws/src/
+
+2. 创建功能包
+cd chapt2_ws/src
+ros2 pkg create example_cpp --build-type ament_cmake --dependencies rclcpp
+
+解释：
+pkg create 是创建包的意思
+–build-type 用来指定该包的编译类型，一共有三个可选项ament_python、ament_cmake、cmake
+–dependencies 指的是这个功能包的依赖，这里小鱼给了一个ros2的C++客户端接口rclcpp
+
+3. 在example_cpp/src下创建一个node_01.cpp文件，输入：
+
+
+4. 在chapt2_ws/src/example_cpp/CMakeLists.txt输入
+add_executable(node_01 src/node_01.cpp)
+ament_target_dependencies(node_01 rclcpp)
+
+install(TARGETS
+  node_01
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+编译：
+colcon build
+colcon build --packages-select example_cpp
+
+配置环境：
+source install/setup.bash
+运行：
+ros2 run example_cpp node_01
+ros2 node list
+
+按照上述流程创建两个ros2节点交流：
+ros2 run example_cpp topic_publisher_01
+ros2 run example_cpp topic_subscribe_01
+
+
+
+
+
+
