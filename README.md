@@ -9,7 +9,7 @@ mkdir -p chapt2_ws/src
 cd chapt2_ws/src
 
 2. 创建功能包
-ros2 pkg create example_cpp1 --build-type ament_cmake --dependencies rclcpp
+ros2 pkg create ros2_study --build-type ament_cmake --dependencies rclcpp
 
 解释：
 pkg create 是创建包的意思
