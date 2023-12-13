@@ -1,0 +1,40 @@
+#####################################################
+Install ROS2 humble
+Reference:
+https://docs.ros.org/en/humble/Installation/Alternatives/Ubuntu-Development-Setup.html#
+
+Attention:
+sudo pip install setuptools==58.2.0 --target=/usr/lib/python3/dist-packages
+echo "source ~/ros2_humble/install/local_setup.bash" >> ~/.bashrc
+
+#######################################################
+打开一个终端，依次执行以下命令，运行 talker 节点：
+
+source /opt/ros/humble/setup.bash
+ros2 run demo_nodes_cpp talker
+
+另开一个终端，依次执行以下命令，运行 listener 节点：
+
+source /opt/ros/humble/setup.bash
+ros2 run demo_nodes_py listener
+
+######################################################
+Install ros2 mavros 
+Reference:
+https://github.com/mavlink/mavros/blob/ros2/mavros/README.md
+
+Run:
+ros2 run mavros mavros_node --ros-args --params-file params.yaml
+
+
+######################################################
+sudo apt-get update
+sudo apt upgrade
+sudo apt install ros-humble-desktop os-humble-mavros-extras
+
+remove:
+sudo apt remove ~nros-humble-* && sudo apt autoremove
+
+rm -rf ros2_dir
+
+

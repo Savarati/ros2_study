@@ -1,0 +1,83 @@
+ubuntu18.04(QRB5165) foxy ,ubuntu22.04 ROS2 humble install darknet_ros problem that you may encounter.
+
+在QRB5165 Ubuntu18.04 与 ubuntu22.04上编译darkent_ros物体检测节点时遇到的问题
+主要有ros2 package找不到， git仓库问题， opencv版本不正确等问题。
+
+###################################################################
+获取：https://github.com/leggedrobotics/darknet_ros.git
+
+cd colcon_workspace/src
+git clone --recursive git@github.com:leggedrobotics/darknet_ros.git
+切换到foxy分支 git checkout foxy.
+cd ../
+
+colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+
+cd src/darknet_ros/darknet_ros/launch  运行：ros2 launch darknet_ros darknet_ros.launch.py
+
+build 失败问题 (基本都是环境问题)
+1. cv_bridge package (ros2 packages没有，解决：下载源码编译安装，还是直接安装到ros2目录下) （image_comm也是一样的问题，同样源码安装）
+sudo apt install python3-numpy
+sudo apt install libboost-python-dev
+
+cd <YOUR_ROS2_WORKSPACE>/src  (~/ros2_humble/src/ros-perception)
+git clone https://github.com/ros-perception/vision_opencv.git -b humble
+cd ..
+
+colcon build --packages-select cv_bridge
+
+sudo apt install python3-opencv
+
+source <YOUR_ROS2_WORKSPACE>/install/local_setup.bash
+colcon testrr
+
+2. show_image 问题 （下载的darkent目录是个git连接，master与foxy分支使用的是不同的git, 解决如下：）
+进入目录，删除darkent目录重新抓取，从这里抓https://github.com/pjreddie/darknet.git （master分支的darkent与foxy分支使用的不同）
+然后git reset --hard 508381b37fe75e0e1a01bcb2941cb0b31eb0e4c9
+
+3. cvIplImage问题 （darkent_ros使用的是opencv4.2.0, ubuntu18.04(QRB5165) 是3.2.0） 解决：从源码安装4.2.0版本
+
+
+4. 查看opencv版本
+apt show libopencv-dev
+
+5. 安装opencv4.2.0
+源码安装
+Reference: 
+	https://docs.opencv.org/4.2.0/d7/d9f/tutorial_linux_install.html   https://zhuanlan.zhihu.com/p/364694419
+git clone https://github.com/opencv/opencv.git -b 4.2.0
+
+cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local -D OPENCV_GENERATE_PKGCONFIG=ON .. 
+cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local/opencv4.2.0 -D OPENCV_GENERATE_PKGCONFIG=ON .. (..表示去上级目录查找CMakelist.txt)
+sudo make -j8
+sudo make install
+sudo ldconfig -v
+pkg-config --modversion opencv4 
+
+完成后修改 find_package(OpenCV REQUITE) -> find_package(OpenCV 4.2.0 REQUITE) 使用我们自己编译的opencv version
+
+~/.bashrc
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/opencv4.2.0/pkgconfig
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/opencv4.2.0
+
+https://github.com/Ar-Ray-code/darknet_ros.git
+opencv版本不对
+
+#####################################################################
+其它仓库的darkent_ros_fp16
+https://github.com/Ar-Ray-code/darknet_ros_fp16
+
+$ sudo apt install ros-humble-desktop ros-humble-v4l2-camera
+$ source /opt/ros/humble/setup.bash
+$ mkdir -p ~/ros2_ws/src
+$ cd ~/ros2_ws/src
+$ git clone --recursive https://github.com/Ar-Ray-code/darknet_ros_yolov4.git
+$ darknet_ros_yolov4/darknet_ros/rm_darknet_CMakeLists.sh
+$ cd ~/ros2_ws
+$ colcon build --symlink-install
+
+
+
+
+
+
