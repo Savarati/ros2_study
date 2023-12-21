@@ -1,0 +1,47 @@
+##################### gscam + darknet_ros + image_view 物体检测测试 ############################################################
+1. gscam 获取编译和测试
+https://github.com/ros-drivers/gscam.git
+colcon build
+ros2 launch v4l.launch.xml （需配置   d2lros2/gscam/install/gscam/share/gscam/examples  ，默认是RGB编码 发布ros2 image ，topic是 /v4l/camera/image_raw）
+
+测试：使用ROS2 image_pipeline 的 image_view node
+git clone https://github.com/ros-perception/image_pipeline.git -b humble
+#source /opt/ros/humble/setup.bash
+colcon build --symlink-install (第一次要全编)
+colcon build --packages-select image_pipeline
+
+ros2 run image_view image_view --ros-args --remap image:=/v4l/camera/image_raw 预览
+ros2 run image_view image_saver --ros-args --remap image:=/v4l/camera/image_raw 捕获
+
+
+git config http.postBuffer 524288000
+git config http.sslVerify "false"
+
+2. 测试物体检测
+配置 d2lros2/darknet_ros/install/darknet_ros/share/darknet_ros/launch/darknet_ros.launch.py
+default_value = '/v4l/camera/image_raw' (接收gscam topic image)
+配置 d2lros2/darknet_ros/install/darknet_ros/share/darknet_ros/config/ros.yaml        topic: /v4l/camera/image_raw
+
+
+运行：
+ros2 launch darknet_ros darknet_ros.launch.py
+
+运行：
+ros2 run image_view image_view --ros-args --remap image:=/darknet_ros/detection_image
+ros2 run image_view image_saver --ros-args --remap image:=/darknet_ros/detection_image
+
+
+gst-launch-1.0 v4l2src device=/dev/video0 ! videoconvert ! video/x-raw,format=NV21,framerate=30/1,width=640,height=480 ! autovideosink
+gst-launch-1.0 v4l2src device=/dev/video0 ! videoconvert ! video/x-raw,format=RGB,framerate=30/1,width=640,height=480 ! xvimagesink
+gst-launch-1.0 v4l2src device=/dev/video0 ! videoconvert ! video/x-raw,format=MONO8,framerate=30/1,width=640,height=480 ! appsink
+gst-launch-1.0 v4l2src ! videoconvert ! autovideosink
+
+
+pip install typing-extensions==4.3.0
+
+https://blog.csdn.net/u010879745/article/details/120606921
+
+sudo apt-get install libglu1-mesa libglu1-mesa-dev qtdeclarative5-dev qtbase5-dev
+git clone -b foxy https://github.com/ros-visualization/interactive_markers.git
+
+

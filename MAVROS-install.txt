@@ -1,0 +1,216 @@
+ROS2 MAVROS安装
+
+安装ROS2 humble 完成
+https://docs.ros.org/en/humble/Installation/Alternatives/Ubuntu-Development-Setup.html#
+sudo pip install setuptools==58.2.0 --target=/usr/lib/python3/dist-packages
+echo "source ~/ros2_humble/install/local_setup.bash" >> ~/.bashrc
+安装ros2 mavros 使用colon编译
+https://github.com/mavlink/mavros/blob/ros2/mavros/README.md
+
+ros2 run mavros mavros_node --ros-args --params-file params.yaml
+
+
+
+
+
+22.04版本
+https://blog.csdn.net/feichangyanse/article/details/132632391
+https://blog.csdn.net/the_same_bug/article/details/129388387
+
+ 步骤1：打开终端
+步骤2：运行以下命令，更新软件包索引
+
+sudo apt-get update
+
+步骤3：运行以下命令，安装ROS的key
+
+sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+
+步骤4：添加ROS官方软件仓库
+
+sudo apt-add-repository "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main"
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+
+https://blog.csdn.net/iolcontor/article/details/84887249
+sudo add-apt-repository --remove ppa:/webupd8team/sublime-text-3
+
+
+步骤5：更新软件包索引
+
+
+https://blog.csdn.net/ddppost/article/details/126027117
+1. 环境设置
+sudo apt update && sudo apt install locales
+sudo locale-gen en_US en_US.UTF-8
+sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+2.添加源
+sudo apt update && sudo apt install curl gnupg lsb-release
+sudo curl -sSl https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+sudo apt update
+sudo apt upgrade
+sudo apt install ros-humble-desktop
+
+问题 1 源没有release：
+sudo vi /etc/apt/sources.list 删除所有内容
+
+deb http://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ jammy-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ jammy-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ jammy-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ jammy-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse
+
+sudo apt update
+sudo apt upgrade
+
+问题二：由于没有公钥，无法验证下列签名
+https://blog.csdn.net/u011304078/article/details/133267764
+
+安装 ROS 参考三 成功
+https://blog.csdn.net/lu_embedded/article/details/129270820
+https://blog.csdn.net/Sugerdadada/article/details/129061052
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+https://site.ip138.com/raw.githubusercontent.com/用这个查ip
+
+
+卸载 ROS2
+
+如果你想卸载 ROS 2，或者想从二进制文件安装后切换到基于源的安装，那么可以运行以下命令卸载 ROS 2。
+
+sudo apt remove ~nros-humble-* && sudo apt autoremove
+
+如果你想将 ROS 2 的软件包信息删除干净，可以执行以下命令。
+
+sudo rm /etc/apt/sources.list.d/ros2.list
+sudo apt update
+sudo apt autoremove
+# Consider upgrading for packages previously shadowed.
+sudo apt upgrade
+
+
+安装 MAVROS 未完成
+参考 ：https://dev.px4.io/v1.11_noredirect/zh/ros/mavros_installation.html
+1. 使用pip3安装catkin-tools  先pip install --upgrade pip
+sudo pip3 install -U wstool
+sudo pip3 install -U catkin-tools
+sudo apt-get install python3-rosinstall-generator
+
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws
+catkin init
+wstool init src
+
+rosinstall_generator --rosdistro kinetic mavlink | tee /tmp/mavros.rosinstall
+rosinstall_generator --rosdistro kinetic --upstream mavros | tee -a /tmp/mavros.rosinstall
+
+wstool merge -t src /tmp/mavros.rosinstall
+wstool update -t src -j4
+
+sudo rosdep init
+rosdep update
+rosdep install --from-paths src --ignore-src -y
+
+./src/mavros/mavros/scripts/install_geographiclib_datasets.sh
+catkin build
+
+
+wget https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh
+
+bin方式安装   要安装humble版本
+sudo apt-get install ros-humble-mavros ros-humble-mavros-extras
+https://blog.csdn.net/qq_35598561/article/details/131281485
+
+
+ROS测试
+测试示例
+
+如果你前面安装的是 ros-humble-desktop 版本，那么可以尝试运行 ROS 2 自带的示例程序 Talker-listener。
+
+打开一个终端，依次执行以下命令，运行 talker 节点：
+
+source /opt/ros/humble/setup.bash
+ros2 run demo_nodes_cpp talker
+
+另开一个终端，依次执行以下命令，运行 listener 节点：
+
+source /opt/ros/humble/setup.bash
+ros2 run demo_nodes_py listener
+
+
+这时候，你应该会看到 talker 说它正在发布消息，而 listener 说我听到了这些消息。
+
+# talker 节点
+$ ros2 run demo_nodes_cpp talker
+[INFO] [1677591294.921179014] [talker]: Publishing: 'Hello World: 1'
+[INFO] [1677591295.921028802] [talker]: Publishing: 'Hello World: 2'
+[INFO] [1677591296.921506241] [talker]: Publishing: 'Hello World: 3'
+
+# listener 节点
+$ ros2 run demo_nodes_py listener
+[INFO] [1677591294.957119512] [listener]: I heard: [Hello World: 1]
+[INFO] [1677591295.925429074] [listener]: I heard: [Hello World: 2]
+[INFO] [1677591296.926465954] [listener]: I heard: [Hello World: 3]
+
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc	# 将配置环境指令通过下面的指令写入 ”~/.bashrc“ 文件
+sudo gedit ~/.bashrc	# 查看”~/.bashrc“ 文件
+ros2 run turtlesim turtlesim_node		# 启动乌龟GUI节点界面，乌龟可以在界面中运动
+ros2 run turtlesim turtle_teleop_key	# 启动键盘控制节点，可以通过键盘控制乌龟运动
+
+export HOME=/root
+export ROS_LOG_DIR=/root/log/
+source /root/ros2_foxy/install/setup.bash
+source /root/ros2_ws/install/setup.bash
+
+colcon build --packages-select mavserver
+
+ros2 run mavserver mavros_cam
+
+ssh root@10.85.4.21
+oelinux123
+
+sudo apt-get install libyaml-cpp-dev
+
+
+
+ssh github
+
+# 配置用户名和邮箱
+git config --global --list
+git config --global user.name "Simon"
+git config --global user.email "2478822983@qq.com"
+
+ssh-keygen -t rsa -C "2478822983@qq.com"
+
+cp id_rsp.pub ../
+复制到github.com setting->ssh and 
+ssh -T git@github.com
+yes
+
+git clone git@github.com:Savarati/ros2-cam-node.git 
+
+git push origin main:main
+
+git rm dir/
+
+scp -r ./src root@10.85.4.28:/root/gscam/sr
+
+
+
+
+
+
+
+
+
+
+
